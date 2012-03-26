@@ -1,19 +1,17 @@
 /*
  * jQuery One Page Nav Plugin
  * http://github.com/davist11/jQuery-One-Page-Nav
+ * rewritten by Antoine Lefeuvre to remove dependencies to ScrollTo and actions on the click
+ * http://github.com/alefeuvre/jQuery-One-Page-Nav
  *
  * Copyright (c) 2010 Trevor Davis (http://trevordavis.net)
  * Dual licensed under the MIT and GPL licenses.
  * Uses the same license as jQuery, see:
  * http://jquery.org/license
  *
- * @version 0.9
- *
  * Example usage:
  * $('#nav').onePageNav({
- *   currentClass: 'current',
- *   changeHash: false,
- *   scrollSpeed: 750
+ *   currentClass: 'current'
  * });
  */
 ;(function($) {
@@ -22,37 +20,6 @@
         onePageNav = {};
     
     onePageNav.sections = {};
-    
-    onePageNav.bindNav = function($el, $this, o) {
-      var $par = $el.parent(),
-          newLoc = $el.attr('href'),
-          $win = $(window);
-
-      if(!$par.hasClass(o.currentClass)) {
-        if(o.begin) {
-          o.begin();
-        }
-        onePageNav.adjustNav($this, $par, o.currentClass);
-        $win.unbind('.onePageNav');
-        $.scrollTo(newLoc, o.scrollSpeed, {
-          easing: o.easing,
-          offset: {
-            top: -o.scrollOffset
-          },
-          onAfter: function() {
-            if(o.changeHash) {
-              window.location.hash = newLoc;
-            }
-            $win.bind('scroll.onePageNav', function() {
-              onePageNav.scrollChange($this, o);
-            });
-            if(o.end) {
-              o.end();
-            }
-          }
-        });
-      }
-    };
     
     onePageNav.adjustNav = function($this, $el, curClass) {
       $this.find('.'+curClass).removeClass(curClass);
@@ -105,11 +72,6 @@
       if(o.filter !== '') {
         $nav = $nav.filter(o.filter);
       }
-
-      $nav.bind('click', function(e) {
-        onePageNav.bindNav($(this), $this, o);
-        e.preventDefault();
-      });
     
       onePageNav.getPositions($this, o);
     
@@ -137,14 +99,9 @@
   // default options
   $.fn.onePageNav.defaults = {
     currentClass: 'current',
-    changeHash: false,
-    easing: 'swing',
     filter: '',
-    scrollSpeed: 750,
     scrollOffset: 0,
     scrollThreshold: 0.5,
-    begin: false,
-    end: false
   };
 
 })(jQuery);
